@@ -36,6 +36,10 @@ class ReminderNotificationService {
     int id, {
     bool weekly = false,
   }) async {
+    // Request exact alarm permission before scheduling
+    final androidImplementation = _flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    await androidImplementation?.requestExactAlarmsPermission();
+
     final now = DateTime.now();
     final scheduledDate =
         DateTime(now.year, now.month, now.day, time.hour, time.minute);
@@ -47,8 +51,10 @@ class ReminderNotificationService {
       tz.local,
     );
 
+    debugPrint('Scheduling reminder: $title at ${tzDateTime.toString()} (id: $id)');
+
     const androidDetails = AndroidNotificationDetails(
-      'meal_reminder_v2', // Changed channel ID to force recreation
+      'meal_reminder_v3', // Changed channel ID to force recreation
       'Meal Reminders',
       channelDescription: 'Notifications for meal reminders',
       importance: Importance.max,
@@ -63,16 +69,21 @@ class ReminderNotificationService {
 
     const platformDetails = NotificationDetails(android: androidDetails);
 
-    await _flutterLocalNotificationsPlugin.zonedSchedule(
-      id,
-      title,
-      'Time to log your $title',
-      tzDateTime,
-      platformDetails,
-      matchDateTimeComponents: weekly ? DateTimeComponents.dayOfWeekAndTime : DateTimeComponents.time,
-      payload: null,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    );
+    try {
+      await _flutterLocalNotificationsPlugin.zonedSchedule(
+        id,
+        title,
+        'Time to log your $title',
+        tzDateTime,
+        platformDetails,
+        matchDateTimeComponents: weekly ? DateTimeComponents.dayOfWeekAndTime : DateTimeComponents.time,
+        payload: null,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      );
+      debugPrint('Reminder scheduled successfully.');
+    } catch (e) {
+      debugPrint('Error scheduling reminder: $e');
+    }
   }
 
   Future<void> sendNotification(String title, String body, int id) async {
@@ -151,6 +162,22 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
         key.hashCode,
         weekly: key == 'Weight',
       );
+      // Show a pop-up dialog when a reminder is set
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Reminder Set'),
+            content: Text('A notification will pop up and play a sound at ${times[key]!.format(context)}.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 
