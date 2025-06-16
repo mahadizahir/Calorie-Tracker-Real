@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'user_calorie_goal.dart';
+import 'food_log_service.dart';
 
 // Make sure this import path is correct
 // import 'FoodLogPage.dart'; // No longer needed here since navigation is in bottom nav
@@ -18,35 +19,108 @@ class _CalorieDashboardPageState extends State<CalorieDashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text('Calorie & Nutrition Dashboard'),
-        backgroundColor: Colors.green,
-        // Removed the food icon button to avoid duplication with bottom nav
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.restaurant_menu),
-        //     tooltip: 'Log Food',
-        //     onPressed: () {
-        //       // No longer needed here
-        //     },
-        //   ),
-        // ],
+        title: const Text('Home', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildViewSwitcher(),
-            SizedBox(height: 16),
-            _buildDailySummary(),
-            SizedBox(height: 16),
-            _buildMacroChart(),
-            SizedBox(height: 16),
-            _buildNutritionalBreakdown(),
-            SizedBox(height: 16),
-            _buildGoalComparison(),
-          ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF232526), Color(0xFF0f2027), Color(0xFF2193b0)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 24),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.13), // Slightly more visible
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 12,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(16.0),
+                child: _buildViewSwitcher(),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.13),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 12,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(16.0),
+                child: _buildDailySummary(),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.13),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 12,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(16.0),
+                child: _buildMacroChart(),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.13),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 12,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(16.0),
+                child: _buildNutritionalBreakdown(),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.13),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 12,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(16.0),
+                child: _buildGoalComparison(),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -71,44 +145,43 @@ class _CalorieDashboardPageState extends State<CalorieDashboardPage> {
 
   Widget _buildDailySummary() {
     final userGoal = UserCalorieGoal.dailyGoal;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+    return Column(
+      children: [
+        Text('Daily Summary',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+        SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Text('Daily Summary',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildSummaryItem('Consumed', '2000 kcal'),
-                _buildSummaryItem('Burned', '500 kcal'),
-                _buildSummaryItem('Goal',
-                    userGoal != null
-                        ? '${userGoal.toStringAsFixed(0)} kcal'
-                        : '1500 kcal'),
-              ],
-            ),
+            _buildSummaryItem('Consumed', '2000 kcal'),
+            _buildSummaryItem('Burned', '500 kcal'),
+            _buildSummaryItem('Goal',
+                userGoal != null
+                    ? '${userGoal.toStringAsFixed(0)} kcal'
+                    : '1500 kcal'),
           ],
         ),
-      ),
+      ],
     );
   }
 
   Widget _buildSummaryItem(String label, String value) {
     return Column(
       children: [
-        Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        Text(label),
+        Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+        Text(label, style: TextStyle(color: Colors.white)),
       ],
     );
   }
 
   Widget _buildMacroChart() {
     final userGoal = UserCalorieGoal.dailyGoal ?? 2000.0;
-    final consumed = 2000.0;
-    final burned = 500.0;
+    final foodLog = FoodLogService().foodLog;
+    double consumed = 0;
+    for (var food in foodLog) {
+      consumed += (food['calories'] ?? 0) is num ? food['calories'] : double.tryParse(food['calories'].toString()) ?? 0;
+    }
+    final burned = 0.0; // Set burned to zero for now
     final remaining = (userGoal - (consumed - burned)).clamp(0, userGoal);
 
     final sections = [
@@ -130,7 +203,7 @@ class _CalorieDashboardPageState extends State<CalorieDashboardPage> {
       ),
       PieChartSectionData(
         color: Colors.green,
-        value: remaining.toDouble(), // Fix type error
+        value: remaining.toDouble(),
         title: 'Remaining\n${remaining.toStringAsFixed(0)}',
         radius: 80,
         titleStyle: TextStyle(
@@ -138,88 +211,86 @@ class _CalorieDashboardPageState extends State<CalorieDashboardPage> {
       ),
     ];
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Calorie Distribution',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-            Center(
-              child: SizedBox(
-                width: 300,
-                height: 300,
-                child: PieChart(
-                  PieChartData(
-                    sections: sections,
-                    sectionsSpace: 2,
-                    centerSpaceRadius: 40,
-                  ),
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Calorie Distribution',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+        SizedBox(height: 10),
+        Center(
+          child: SizedBox(
+            width: 300,
+            height: 300,
+            child: PieChart(
+              PieChartData(
+                sections: sections,
+                sectionsSpace: 2,
+                centerSpaceRadius: 40,
               ),
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
   Widget _buildNutritionalBreakdown() {
-    final nutrients = {
-      'Sugar': '30g',
-      'Fiber': '25g',
-      'Vitamin A': '90%',
-      'Vitamin C': '80%',
-    };
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    final totals = FoodLogService().getNutritionTotals();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Nutritional Breakdown',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+        SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Nutritional Breakdown',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ...nutrients.entries.map((e) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Text(e.key), Text(e.value)],
-                  ),
-                )),
+            Text('Protein', style: TextStyle(color: Colors.white)),
+            Text('${totals['protein']?.toStringAsFixed(1) ?? '0'} g', style: TextStyle(color: Colors.white)),
           ],
         ),
-      ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Fat', style: TextStyle(color: Colors.white)),
+            Text('${totals['fat']?.toStringAsFixed(1) ?? '0'} g', style: TextStyle(color: Colors.white)),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Carbs', style: TextStyle(color: Colors.white)),
+            Text('${totals['carbs']?.toStringAsFixed(1) ?? '0'} g', style: TextStyle(color: Colors.white)),
+          ],
+        ),
+      ],
     );
   }
 
   Widget _buildGoalComparison() {
-    final intake = 1400.0;
-    final goal = 2000.0;
-    final progress = intake / goal;
+    final foodLog = FoodLogService().foodLog;
+    double intake = 0;
+    for (var food in foodLog) {
+      intake += (food['calories'] ?? 0) is num ? food['calories'] : double.tryParse(food['calories'].toString()) ?? 0;
+    }
+    final goal = UserCalorieGoal.dailyGoal ?? 2000.0;
+    final progress = goal > 0 ? (intake / goal).clamp(0.0, 1.0) : 0.0;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Intake vs Goal',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-            LinearProgressIndicator(
-              value: progress,
-              minHeight: 10,
-              backgroundColor: Colors.grey[300],
-              color: Colors.green,
-            ),
-            SizedBox(height: 5),
-            Text('${intake.toInt()} / ${goal.toInt()} kcal'),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Intake vs Goal',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+        SizedBox(height: 10),
+        LinearProgressIndicator(
+          value: progress,
+          minHeight: 10,
+          backgroundColor: Colors.grey[300],
+          color: Colors.green,
         ),
-      ),
+        SizedBox(height: 5),
+        Text('${intake.toInt()} / ${goal.toInt()} kcal', style: TextStyle(color: Colors.white)),
+      ],
     );
   }
 }
