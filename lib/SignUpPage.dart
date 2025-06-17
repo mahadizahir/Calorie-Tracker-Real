@@ -136,11 +136,11 @@ class _SignUpPageState extends State<SignUpPage> {
                               usernameController.text.trim(),
                               passwordController.text.trim(),
                             );
-                            // After sign up, go to sign in page
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (_) => SignInPage()),
+                                builder: (_) => SignInPage(),
+                              ),
                             );
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(

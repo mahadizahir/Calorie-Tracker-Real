@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'user_calorie_goal.dart';
+import 'ProfilePage.dart';
+
+class UserProfile {
+  static String? username;
+  static String? gender;
+  static double? age;
+  static double? height;
+  static double? weight;
+}
 
 class CalorieCalculatorPage extends StatefulWidget {
-  const CalorieCalculatorPage({super.key});
+  final String? username;
+  const CalorieCalculatorPage({super.key, this.username});
 
   @override
   _CalorieCalculatorPageState createState() => _CalorieCalculatorPageState();
@@ -14,6 +24,7 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
   String _gender = 'male';
   double _age = 25;
   double _height = 170; // in cm
+  double _weight = 70; // in kg
   String _activity = 'Sedentary';
   String _goal = 'Maintain weight';
   double? _calories;
@@ -71,11 +82,13 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
 
   void _calculateCalories() {
     double bmr;
-    double defaultWeight = 70; // Use a default weight
+    if (_formKey.currentState != null && !_formKey.currentState!.validate()) {
+      return;
+    }
     if (_gender == 'male') {
-      bmr = 10 * defaultWeight + 6.25 * _height - 5 * _age + 5;
+      bmr = 10 * _weight + 6.25 * _height - 5 * _age + 5;
     } else {
-      bmr = 10 * defaultWeight + 6.25 * _height - 5 * _age - 161;
+      bmr = 10 * _weight + 6.25 * _height - 5 * _age - 161;
     }
     final calculated = bmr * _activityFactor(_activity) + _goalAdjustment(_goal);
     setState(() {
@@ -83,6 +96,18 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
       _showNext = true;
     });
     UserCalorieGoal.dailyGoal = calculated;
+    UserProfile.gender = _gender;
+    UserProfile.age = _age;
+    UserProfile.height = _height;
+    UserProfile.weight = _weight;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.username != null) {
+      UserProfile.username = widget.username;
+    }
   }
 
   @override
@@ -200,6 +225,27 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
                         validator: (val) => val == null || val.isEmpty ? 'Enter your height' : null,
                       ),
                       const SizedBox(height: 12),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Weight (kg)',
+                          labelStyle: const TextStyle(color: Colors.white),
+                          prefixIcon: const Icon(Icons.fitness_center, color: Colors.white),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white54),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        style: const TextStyle(color: Colors.white),
+                        initialValue: _weight.toStringAsFixed(0),
+                        keyboardType: TextInputType.number,
+                        onChanged: (val) => _weight = double.tryParse(val) ?? _weight,
+                        validator: (val) => val == null || val.isEmpty ? 'Enter your weight' : null,
+                      ),
+                      const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
                         value: _activity,
                         dropdownColor: Colors.black87,
@@ -278,34 +324,21 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20),
-                        AnimatedOpacity(
-                          opacity: _showNext ? 1.0 : 0.0,
-                          duration: Duration(milliseconds: 600),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(builder: (_) => MainScreen()),
-                              );
-                            },
-                            child: Center(
-                              child: Text(
-                                'Next →',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  color: Color(0xFF2193b0),
-                                  fontWeight: FontWeight.bold,
-                                  shadows: [
-                                    Shadow(
-                                      blurRadius: 8,
-                                      color: Colors.black54,
-                                      offset: Offset(1, 2),
-                                    ),
-                                  ],
-                                ),
+                        if (_showNext)
+                          Center(
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(builder: (_) => MainScreen()),
+                                );
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                textStyle: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                               ),
+                              child: const Text('Next →'),
                             ),
                           ),
-                        ),
                       ]
                     ],
                   ),

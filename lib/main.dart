@@ -5,6 +5,8 @@ import 'FoodLogPage.dart';
 import 'FoodSearchPage.dart'; // Import FoodSearchPage
 import 'SignInPage.dart';
 import 'ReminderPage.dart'; // Import ReminderPage
+import 'ExercisePage.dart'; // Import ExercisePage
+import 'CalorieCalculatorPage.dart'; // Import CalorieCalculatorPage
 
 
 void main() {
@@ -30,7 +32,8 @@ class MyApp extends StatelessWidget {
 
 /// The main screen with bottom navigation after sign-in.
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final String? username;
+  const MainScreen({super.key, this.username});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -38,18 +41,28 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  String _username = 'User';
 
   final List<Widget> _screens = [
     CalorieDashboardPage(),
-    ReminderSettingsScreen(), // Use the functional reminder notification screen
+    ReminderSettingsScreen(),
     FoodLogPage(),
-    FoodSearchPage(), // Replace CalorieCalculatorPage with FoodSearchPage
+    FoodSearchPage(),
+    ExercisePage(),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.username != null && widget.username!.isNotEmpty) {
+      _username = widget.username!;
+    }
   }
 
   @override
@@ -75,6 +88,7 @@ class _MainScreenState extends State<MainScreen> {
               _buildNavItem(icon: Icons.notifications, label: 'Reminder', index: 1),
               _buildNavItem(icon: Icons.restaurant_menu, label: 'Food', index: 2),
               _buildNavItem(icon: Icons.search, label: 'Search', index: 3),
+              _buildNavItem(icon: Icons.fitness_center, label: 'Exercise', index: 4),
             ],
           ),
         ),

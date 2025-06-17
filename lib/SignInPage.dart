@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Main.dart';
-import 'CalorieCalculatorPage.dart';
+import 'package:flutter_application_1/main.dart';
 import 'SignUpPage.dart';
 import 'auth_service.dart';
+import 'CalorieCalculatorPage.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -44,7 +44,7 @@ class _SignInPageState extends State<SignInPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.fitness_center,
-                          size: 48, color: Colors.green),
+                          size: 48, color: const Color.fromARGB(255, 255, 255, 255)),
                       const SizedBox(height: 12),
                       Text('Welcome to MyFitnessCal',
                           style: TextStyle(
@@ -124,7 +124,8 @@ class _SignInPageState extends State<SignInPage> {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (_) => CalorieCalculatorPage()),
+                                  builder: (_) => CalorieCalculatorPage(),
+                                ),
                               );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(

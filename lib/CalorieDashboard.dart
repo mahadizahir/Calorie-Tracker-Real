@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'user_calorie_goal.dart';
 import 'food_log_service.dart';
+import 'exercise_log_service.dart';
 
 // Make sure this import path is correct
 // import 'FoodLogPage.dart'; // No longer needed here since navigation is in bottom nav
@@ -145,6 +146,12 @@ class _CalorieDashboardPageState extends State<CalorieDashboardPage> {
 
   Widget _buildDailySummary() {
     final userGoal = UserCalorieGoal.dailyGoal;
+    final burned = ExerciseLogService().getTotalBurned();
+    final foodLog = FoodLogService().foodLog;
+    double consumed = 0;
+    for (var food in foodLog) {
+      consumed += (food['calories'] ?? 0) is num ? food['calories'] : double.tryParse(food['calories'].toString()) ?? 0;
+    }
     return Column(
       children: [
         Text('Daily Summary',
@@ -153,8 +160,8 @@ class _CalorieDashboardPageState extends State<CalorieDashboardPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildSummaryItem('Consumed', '2000 kcal'),
-            _buildSummaryItem('Burned', '500 kcal'),
+            _buildSummaryItem('Consumed', '${consumed.toStringAsFixed(0)} kcal'),
+            _buildSummaryItem('Burned', '${burned.toStringAsFixed(0)} kcal'),
             _buildSummaryItem('Goal',
                 userGoal != null
                     ? '${userGoal.toStringAsFixed(0)} kcal'
@@ -181,7 +188,7 @@ class _CalorieDashboardPageState extends State<CalorieDashboardPage> {
     for (var food in foodLog) {
       consumed += (food['calories'] ?? 0) is num ? food['calories'] : double.tryParse(food['calories'].toString()) ?? 0;
     }
-    final burned = 0.0; // Set burned to zero for now
+    final burned = ExerciseLogService().getTotalBurned();
     final remaining = (userGoal - (consumed - burned)).clamp(0, userGoal);
 
     final sections = [
@@ -273,13 +280,14 @@ class _CalorieDashboardPageState extends State<CalorieDashboardPage> {
     for (var food in foodLog) {
       intake += (food['calories'] ?? 0) is num ? food['calories'] : double.tryParse(food['calories'].toString()) ?? 0;
     }
+    final burned = ExerciseLogService().getTotalBurned();
     final goal = UserCalorieGoal.dailyGoal ?? 2000.0;
-    final progress = goal > 0 ? (intake / goal).clamp(0.0, 1.0) : 0.0;
+    final progress = goal > 0 ? ((intake - burned) / goal).clamp(0.0, 1.0) : 0.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Intake vs Goal',
+        Text('Intake vs Goal (will reduce if exercise)',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
         SizedBox(height: 10),
         LinearProgressIndicator(
@@ -289,7 +297,7 @@ class _CalorieDashboardPageState extends State<CalorieDashboardPage> {
           color: Colors.green,
         ),
         SizedBox(height: 5),
-        Text('${intake.toInt()} / ${goal.toInt()} kcal', style: TextStyle(color: Colors.white)),
+        Text('${(intake - burned).toInt()} / ${goal.toInt()} kcal', style: TextStyle(color: Colors.white)),
       ],
     );
   }
