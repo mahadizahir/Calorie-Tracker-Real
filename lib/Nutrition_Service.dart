@@ -13,7 +13,7 @@ class NutritionService {
       '&app_key=$appKey'
       '&ingr=${Uri.encodeComponent(query)}'
       '&nutrition-type=logging',
-    );
+    ); //Builds the URL for the food search API request.
 
     print('🔍 [searchFood] Searching: $query');
     print('🌐 URL: $url');
@@ -50,6 +50,7 @@ class NutritionService {
 
     try {
       final response = await http.get(url);
+      //Sends the HTTP GET request to the API.
       print('🌐 Response Status: ${response.statusCode}');
 
       if (response.statusCode == 200) {

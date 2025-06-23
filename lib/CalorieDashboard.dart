@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'user_calorie_goal.dart';
 import 'food_log_service.dart';
 import 'exercise_log_service.dart';
 
@@ -301,4 +300,8 @@ class _CalorieDashboardPageState extends State<CalorieDashboardPage> {
       ],
     );
   }
+}
+
+class UserCalorieGoal {
+  static double? dailyGoal;
 }

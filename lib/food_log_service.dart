@@ -3,13 +3,15 @@ import 'dart:convert';
 
 class FoodLogService {
   static final FoodLogService _instance = FoodLogService._internal();
+  // Implements the singleton pattern (only one instance).
   factory FoodLogService() => _instance;
   FoodLogService._internal();
 
   List<Map<String, dynamic>> _foodLog = [];
-
+  //Stores the list of food entries.
   Future<void> loadFoodLog() async {
     final prefs = await SharedPreferences.getInstance();
+    //Loads the food log from local storage
     final foodLogString = prefs.getString('food_log');
     if (foodLogString != null) {
       final List<dynamic> decoded = jsonDecode(foodLogString);
@@ -23,7 +25,7 @@ class FoodLogService {
   }
 
   List<Map<String, dynamic>> get foodLog => _foodLog;
-
+  //Provides access to the current food log.
   void addFood(Map<String, dynamic> food) {
     _foodLog.add(food);
     saveFoodLog();
@@ -42,7 +44,7 @@ class FoodLogService {
       totalProtein += (food['protein'] ?? 0) is num ? food['protein'] : double.tryParse(food['protein'].toString()) ?? 0;
       totalFat += (food['fat'] ?? 0) is num ? food['fat'] : double.tryParse(food['fat'].toString()) ?? 0;
       totalCarbs += (food['carbs'] ?? 0) is num ? food['carbs'] : double.tryParse(food['carbs'].toString()) ?? 0;
-    }
+    }//Calculates and returns total protein, fat, and carbs from the log.
     return {
       'protein': totalProtein,
       'fat': totalFat,

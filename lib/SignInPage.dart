@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/main.dart';
 import 'SignUpPage.dart';
 import 'auth_service.dart';
 import 'CalorieCalculatorPage.dart';

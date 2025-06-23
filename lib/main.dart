@@ -4,9 +4,8 @@ import 'CalorieDashboard.dart';
 import 'FoodLogPage.dart';
 import 'FoodSearchPage.dart'; // Import FoodSearchPage
 import 'SignInPage.dart';
-import 'ReminderPage.dart'; // Import ReminderPage
 import 'ExercisePage.dart'; // Import ExercisePage
-import 'CalorieCalculatorPage.dart'; // Import CalorieCalculatorPage
+
 
 
 void main() {
@@ -41,7 +40,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  String _username = 'User';
 
   final List<Widget> _screens = [
     CalorieDashboardPage(),
@@ -55,14 +53,6 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _selectedIndex = index;
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.username != null && widget.username!.isNotEmpty) {
-      _username = widget.username!;
-    }
   }
 
   @override

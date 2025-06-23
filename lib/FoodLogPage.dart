@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import 'nutrition_service.dart';
 import 'food_log_service.dart';
 
@@ -16,7 +14,7 @@ class _FoodLogPageState extends State<FoodLogPage> {
   List<Map<String, dynamic>> _foodLog = [];
   List<dynamic> _searchResults = [];
   bool _isSearching = false;
-  String _searchQuery = '';
+  //Sets up state: nutrition API, food log list, search results, and loading flag
 
   @override
   void initState() {
@@ -27,6 +25,7 @@ class _FoodLogPageState extends State<FoodLogPage> {
       });
     });
   }
+  //Loads the saved food log from storage when the page starts.
 
   Future<void> _saveFoodLog() async {
     await FoodLogService().saveFoodLog();
@@ -34,6 +33,7 @@ class _FoodLogPageState extends State<FoodLogPage> {
       _foodLog = FoodLogService().foodLog;
     });
   }
+  //Saves the food log and updates the UI.
 
   Future<void> _searchFood(String query) async {
     setState(() {
@@ -56,6 +56,7 @@ class _FoodLogPageState extends State<FoodLogPage> {
       );
     }
   }
+  //Searches for food using the API and updates the search results.
 
   void _showAddSearchedFoodDialog(Map<String, dynamic> food, String meal) {
     final foodName = food['food']['label'] ?? '';
@@ -151,6 +152,7 @@ class _FoodLogPageState extends State<FoodLogPage> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Food logged: $name')),
                   );
+                  //Shows a dialog to add a searched food to the log, validates input, saves, and notifies the user
                 }
               },
               child: Text('Add', style: TextStyle(color: Colors.white)),
@@ -208,14 +210,14 @@ class _FoodLogPageState extends State<FoodLogPage> {
           backgroundColor: Colors.black.withOpacity(0.35),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Text('Search Results', style: TextStyle(color: Colors.white)),
-          content: _isSearching
-              ? Center(child: CircularProgressIndicator())
-              : _searchResults.isEmpty
-                  ? Text('No results found.', style: TextStyle(color: Colors.white70))
-                  : SizedBox(
-                      width: 300,
-                      height: 300,
-                      child: ListView.separated(
+          content: SizedBox(
+            width: 300,
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: _isSearching
+                ? Center(child: CircularProgressIndicator())
+                : _searchResults.isEmpty
+                    ? Text('No results found.', style: TextStyle(color: Colors.white70))
+                    : ListView.separated(
                         itemCount: _searchResults.length,
                         separatorBuilder: (context, index) => SizedBox(height: 10),
                         itemBuilder: (context, index) {
@@ -235,7 +237,7 @@ class _FoodLogPageState extends State<FoodLogPage> {
                           );
                         },
                       ),
-                    ),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -353,3 +355,4 @@ class _FoodLogPageState extends State<FoodLogPage> {
     );
   }
 }
+//Sets up the page background, app bar, and displays meal cards for each meal type.f

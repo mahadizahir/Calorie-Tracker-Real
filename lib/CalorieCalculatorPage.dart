@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
-import 'user_calorie_goal.dart';
-import 'ProfilePage.dart';
+import 'CalorieDashboard.dart';
 
 class UserProfile {
   static String? username;
   static String? gender;
-  static double? age;
-  static double? height;
+  static int? age;
+  static int? height;
   static double? weight;
 }
 
@@ -22,8 +21,8 @@ class CalorieCalculatorPage extends StatefulWidget {
 class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
   final _formKey = GlobalKey<FormState>();
   String _gender = 'male';
-  double _age = 25;
-  double _height = 170; // in cm
+  int _age = 25;
+  int _height = 170; // in cm
   double _weight = 70; // in kg
   String _activity = 'Sedentary';
   String _goal = 'Maintain weight';
@@ -113,11 +112,7 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Calorie Calculator'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+  
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: const BoxDecoration(
@@ -198,9 +193,9 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
                           ),
                         ),
                         style: const TextStyle(color: Colors.white),
-                        initialValue: _age.toStringAsFixed(0),
+                        initialValue: _age.toString(),
                         keyboardType: TextInputType.number,
-                        onChanged: (val) => _age = double.tryParse(val) ?? _age,
+                        onChanged: (val) => _age = int.tryParse(val) ?? _age,
                         validator: (val) => val == null || val.isEmpty ? 'Enter your age' : null,
                       ),
                       const SizedBox(height: 12),
@@ -219,9 +214,9 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
                           ),
                         ),
                         style: const TextStyle(color: Colors.white),
-                        initialValue: _height.toStringAsFixed(0),
+                        initialValue: _height.toString(),
                         keyboardType: TextInputType.number,
-                        onChanged: (val) => _height = double.tryParse(val) ?? _height,
+                        onChanged: (val) => _height = int.tryParse(val) ?? _height,
                         validator: (val) => val == null || val.isEmpty ? 'Enter your height' : null,
                       ),
                       const SizedBox(height: 12),
@@ -249,6 +244,7 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
                       DropdownButtonFormField<String>(
                         value: _activity,
                         dropdownColor: Colors.black87,
+                        icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
                         items: _activityLevels
                             .map((level) => DropdownMenuItem(
                                   value: level,
@@ -279,6 +275,7 @@ class _CalorieCalculatorPageState extends State<CalorieCalculatorPage> {
                       DropdownButtonFormField<String>(
                         value: _goal,
                         dropdownColor: Colors.black87,
+                        icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
                         items: _goalOptions
                             .map((g) => DropdownMenuItem(
                                   value: g,
